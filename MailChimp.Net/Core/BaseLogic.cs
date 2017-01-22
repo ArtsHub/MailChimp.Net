@@ -4,10 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
-#pragma warning disable 1584,1711,1572,1581,1580
+using System.Text;
+#pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 namespace MailChimp.Net.Core
 {
@@ -64,6 +68,63 @@ namespace MailChimp.Net.Core
                              };            
             client.DefaultRequestHeaders.Add("Authorization", $"apikey {this._apiKey}");
             return client;
+        }
+        /// <summary>
+        /// Create Syncronized HttpWebRequest
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <param name="method"></param>
+        /// <returns>HttpWebRequest</returns>
+        protected HttpWebRequest CreateJsonWebRequest(string resource, string httpMethod)
+        {
+            var client = new WebClient();            
+
+            //client.Headers.Add("Authorization", $"apikey {this._apiKey}");
+
+            string baseAddress = $"https://{this.DataCenter}.api.mailchimp.com/3.0/{resource}";
+
+            var request = (HttpWebRequest)WebRequest.Create(baseAddress);
+
+            request.Headers.Add("Authorization", $"apikey {this._apiKey}");
+            
+            request.Accept = "application/json"; 
+            request.ContentType = "application/json";
+            request.Method = httpMethod;
+
+            return request;
+        }
+
+        /// <summary>
+        /// This memthod takes a webreqest and object, write Stram and get the response
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        protected string GetJsonResponseFromRequest(HttpWebRequest request, Object obj)
+        {
+            //Get JSON string for the Member
+            string requestContent = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+            //Encode JSON to Byte[] using UTF8 (ASCII can be used but it will limit the range of characters can be used)
+            UTF8Encoding encoding = new UTF8Encoding();
+            Byte[] bytes = encoding.GetBytes(requestContent);
+
+            //Set he content lenth for the Headers
+            request.ContentLength = bytes.LongLength;
+
+            //Create a new stream from the request
+            Stream newStream = request.GetRequestStream();
+            newStream.Write(bytes, 0, bytes.Length);
+            newStream.Close();
+
+            //Get response from the request
+            var response = request.GetResponse();
+
+            var responseStream = response.GetResponseStream();
+            var responseStreamReader = new StreamReader(responseStream);
+
+            //Return the response stream
+            return responseStreamReader.ReadToEnd();
         }
 
         /// <summary>

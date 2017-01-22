@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
 using MailChimp.Net.Models;
+using Newtonsoft.Json;
+using System.IO;
 #pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 // ReSharper disable UnusedMember.Local
@@ -86,6 +88,26 @@ namespace MailChimp.Net.Logic
                 return await response.Content.ReadAsAsync<Member>().ConfigureAwait(false);
             }
         }
+
+        /// <summary>
+        /// It's a syncronized version of AddOrUpdateAysnc
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public Member AddOrUpdate(string listId, Member member)
+        {
+            //Crate a web request with MC us1 URL
+            string requestUrl = $"{BaseUrl}/{listId}/members/{this.Hash(member.EmailAddress.ToLower())}";
+
+            var jsonHttpWebRequest = this.CreateJsonWebRequest(requestUrl, "PUT");
+
+            //Get JSON content for the request
+            string responseJsonContent = this.GetJsonResponseFromRequest(jsonHttpWebRequest, member);
+
+            return JsonConvert.DeserializeObject<Member>(responseJsonContent);
+        }
+
 
         /// <summary>
         /// The delete async.
