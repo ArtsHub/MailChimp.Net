@@ -46,17 +46,23 @@ namespace MailChimp.Net.Interfaces
 		Task<Campaign> AddAsync(Campaign campaign);
 		Task<Campaign> UpdateAsync(string campaignId, Campaign campaign);
 
+        /// <summary>
+        /// Add or update sync
+        /// </summary>
+        /// <param name="campaign"></param>
+        /// <returns></returns>
+        Campaign AddOrUpdate(Campaign campaign);
 
-		/// <summary>
-		/// The cancel async.
-		/// </summary>
-		/// <param name="campaignId">
-		/// The campaign id.
-		/// </param>
-		/// <returns>
-		/// The <see cref="Task"/>.
-		/// </returns>
-		Task CancelAsync(string campaignId);
+        /// <summary>
+        /// The cancel async.
+        /// </summary>
+        /// <param name="campaignId">
+        /// The campaign id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        Task CancelAsync(string campaignId);
 
         /// <summary>
         /// The delete async.
@@ -133,6 +139,13 @@ namespace MailChimp.Net.Interfaces
         /// </returns>
         Task ScheduleAsync(string campaignId, CampaignScheduleRequest content = null);
 
+        /// <summary>
+        /// Schedule sync
+        /// </summary>
+        /// <param name="campaignId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        void Schedule(string campaignId, CampaignScheduleRequest content = null);
 
         /// <summary>
         /// The get all.

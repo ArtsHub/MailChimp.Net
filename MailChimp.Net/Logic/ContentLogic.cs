@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 using MailChimp.Net.Core;
 using MailChimp.Net.Interfaces;
 using MailChimp.Net.Models;
-#pragma warning disable 1584,1711,1572,1581,1580
+using Newtonsoft.Json;
+#pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 namespace MailChimp.Net.Logic
 {
@@ -60,6 +61,25 @@ namespace MailChimp.Net.Logic
 
                 return await response.Content.ReadAsAsync<Content>().ConfigureAwait(false);
             }
+        }
+
+        /// <summary>
+        /// Add or update content sync
+        /// </summary>
+        /// <param name="campaignId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public Content AddOrUpdate(string campaignId, ContentRequest content)
+        {
+            //Crate a web request with MC us1 URLS
+            string requestUrl = $"campaigns/{campaignId}/content";
+
+            var jsonHttpWebRequest = this.CreateJsonWebRequest(requestUrl, "PUT");
+
+            //Get JSON content for the request
+            string responseJsonContent = this.GetJsonResponseFromRequest(jsonHttpWebRequest, content);
+
+            return JsonConvert.DeserializeObject<Content>(responseJsonContent);
         }
 
         /// <summary>

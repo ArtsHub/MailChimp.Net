@@ -31,6 +31,14 @@ namespace MailChimp.Net.Interfaces
         Task<Content> AddOrUpdateAsync(string campaignId, ContentRequest request = null);
 
         /// <summary>
+        /// Add or update sync
+        /// </summary>
+        /// <param name="campaignId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Content AddOrUpdate(string campaignId, ContentRequest request = null);
+
+        /// <summary>
         /// The get async.
         /// </summary>
         /// <param name="campaignId">
