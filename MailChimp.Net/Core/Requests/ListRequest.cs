@@ -26,5 +26,8 @@ namespace MailChimp.Net.Core
         [QueryString("email")]
         public string Email { get; set; }
 
+        [QueryString("count")]
+        public int Count { get; set; }
+
     }
 }
