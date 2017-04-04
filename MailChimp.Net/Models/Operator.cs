@@ -30,7 +30,7 @@ namespace MailChimp.Net.Models
         NotCompleted,
         [Description("member")]
         Member,
-        [Description("not_member")]
+        [Description("notmember")] // 04/04/2017 -ListCampaign() error fix :  [Description("not_member")] =>> [Description("notmember")]
         NonMember,
         [Description("greater")]
         Greater,
